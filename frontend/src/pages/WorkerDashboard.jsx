@@ -58,14 +58,19 @@ const WorkerDashboard = () => {
     setUpdatingProfile(true);
     const skillsList = skillsInput.split(',').map(s => s.trim()).filter(s => s !== '');
     try {
-      const res = await api.patch('/api/workers/register/', {
+      const payload = {
         bio,
         hourly_rate: parseFloat(hourlyRate),
         address,
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
         skills: skillsList
-      });
+      };
+      
+      const res = profile 
+        ? await api.patch('/api/workers/register/', payload)
+        : await api.post('/api/workers/register/', payload);
+
       setProfile(res.data);
       alert("Profile updated successfully!");
     } catch (err) {
