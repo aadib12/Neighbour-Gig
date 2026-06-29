@@ -18,13 +18,12 @@ const WorkerProfile = () => {
 
   const fetchWorkerDetails = async () => {
     try {
-      // 1. Fetch Worker Profile
-      const workerRes = await api.get(`/api/workers/profiles/${id}/`);
+      const [workerRes, reviewsRes] = await Promise.all([
+        api.get(`/api/workers/profiles/${id}/`),
+        api.get('/api/reviews/')
+      ]);
       setWorker(workerRes.data);
       
-      // 2. Fetch reviews matching this worker
-      // In a real app, we filter reviews by worker_id on backend ViewSet
-      const reviewsRes = await api.get('/api/reviews/');
       const workerReviews = reviewsRes.data.filter(r => r.booking?.worker?.id === id || r.worker === id);
       setReviews(workerReviews);
     } catch (err) {

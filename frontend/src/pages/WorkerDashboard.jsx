@@ -31,12 +31,14 @@ const WorkerDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      // 0. Fetch Predefined Services
-      const servicesRes = await api.get('/api/workers/services/');
-      setAvailableServices(servicesRes.data);
+      const [servicesRes, profileRes, bookingsRes, availRes] = await Promise.all([
+        api.get('/api/workers/services/'),
+        api.get('/api/workers/register/'),
+        api.get('/api/bookings/user/'),
+        api.get('/api/workers/availabilities/')
+      ]);
 
-      // 1. Fetch Worker Profile
-      const profileRes = await api.get('/api/workers/register/');
+      setAvailableServices(servicesRes.data);
       setProfile(profileRes.data);
       setBio(profileRes.data.bio || '');
       setHourlyRate(profileRes.data.hourly_rate || 0);
@@ -44,13 +46,7 @@ const WorkerDashboard = () => {
       setLatitude(profileRes.data.latitude || 0);
       setLongitude(profileRes.data.longitude || 0);
       setSelectedServices(profileRes.data.skills || []);
-      
-      // 2. Fetch Bookings
-      const bookingsRes = await api.get('/api/bookings/user/');
       setBookings(bookingsRes.data);
-      
-      // 3. Fetch Availabilities
-      const availRes = await api.get('/api/workers/availabilities/');
       setAvailabilities(availRes.data);
     } catch (err) {
       console.error(err);
