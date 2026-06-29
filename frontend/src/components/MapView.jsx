@@ -92,7 +92,7 @@ const MapView = ({ center, workers, onSelectWorker }) => {
               <Popup>
                 <div className="p-2 text-slate-900 w-48">
                   <div className="font-bold text-sm">
-                    {worker.user.first_name} {worker.user.last_name}
+                    {worker.user?.first_name || 'Anonymous'} {worker.user?.last_name || 'Worker'}
                   </div>
                   <div className="text-xs text-purple-600 font-semibold mb-1">
                     {(Array.isArray(worker.skills) ? worker.skills.slice(0, 2).join(', ') : '') || 'General Helper'}

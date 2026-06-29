@@ -168,7 +168,7 @@ const NearbyWorkers = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="font-extrabold text-white text-sm">
-                        {worker.user.first_name} {worker.user.last_name}
+                        {worker.user?.first_name || 'Anonymous'} {worker.user?.last_name || 'Worker'}
                       </h4>
                       <p className="text-[10px] text-purple-400 font-semibold uppercase mt-0.5">
                         {(Array.isArray(worker.skills) ? worker.skills.slice(0, 2).join(', ') : '') || 'Local Helper'}

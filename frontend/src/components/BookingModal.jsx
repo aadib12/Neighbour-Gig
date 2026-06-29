@@ -99,7 +99,7 @@ const BookingModal = ({ worker, onClose, onBookingSuccess }) => {
         <div className="flex justify-between items-center border-b border-slate-800 p-5">
           <div>
             <h3 className="text-xl font-bold text-white">Book service</h3>
-            <p className="text-xs text-slate-400">with {worker.user.first_name} {worker.user.last_name}</p>
+            <p className="text-xs text-slate-400">with {worker.user?.first_name || 'Anonymous'} {worker.user?.last_name || 'Worker'}</p>
           </div>
           <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
             <X className="w-5 h-5" />
