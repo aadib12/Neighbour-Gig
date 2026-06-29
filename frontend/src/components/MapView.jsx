@@ -34,6 +34,14 @@ const getCustomerIcon = () => {
 };
 
 const MapView = ({ center, workers, onSelectWorker }) => {
+  if (!center || isNaN(center[0]) || isNaN(center[1])) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-slate-900 border border-slate-800 rounded-2xl text-slate-500 text-xs">
+        Initializing map coordinates...
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full relative overflow-hidden border border-slate-800 rounded-2xl shadow-inner">
       <MapContainer 
@@ -105,4 +113,4 @@ const MapView = ({ center, workers, onSelectWorker }) => {
   );
 };
 
-export default MapView;
+export default React.memo(MapView);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, DollarSign, Star, MessageSquare, Plus, CheckCircle, Navigation, QrCode, X, Check } from 'lucide-react';
 import api from '../api';
 
@@ -138,6 +138,7 @@ const CustomerDashboard = () => {
   const [submittingReview, setSubmittingReview] = useState(false);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
@@ -147,9 +148,10 @@ const CustomerDashboard = () => {
   useEffect(() => {
     if (location.state?.openPaymentForBooking) {
       setSelectedPaymentBooking(location.state.openPaymentForBooking);
-      window.history.replaceState({}, document.title);
+      // Clear location state cleanly using React Router
+      navigate('/dashboard', { replace: true, state: {} });
     }
-  }, [location]);
+  }, [location, navigate]);
 
   const fetchBookings = async () => {
     try {

@@ -42,6 +42,16 @@ const QRScanner = () => {
 
     return () => {
       scanner.clear().catch(err => console.warn("Failed to clear scanner during unmount", err));
+      
+      // Stop all active camera tracks inside the reader video elements to turn off the camera light
+      const videoElements = document.querySelectorAll('#reader video');
+      videoElements.forEach(video => {
+        if (video.srcObject) {
+          const stream = video.srcObject;
+          const tracks = stream.getTracks();
+          tracks.forEach(track => track.stop());
+        }
+      });
     };
   }, [navigate]);
 
