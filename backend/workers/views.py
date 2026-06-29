@@ -55,6 +55,9 @@ class WorkerRegisterUpdateView(APIView):
     def get(self, request):
         try:
             profile = request.user.worker_profile
+            # Ensure QR code exists
+            QRCodeMapping.objects.get_or_create(worker=profile)
+            profile.refresh_from_db()
             serializer = WorkerProfileSerializer(profile)
             return Response(serializer.data)
         except WorkerProfile.DoesNotExist:
@@ -74,6 +77,7 @@ class WorkerRegisterUpdateView(APIView):
             profile = serializer.save(user=request.user)
             # Create QR mapping automatically if not exists
             QRCodeMapping.objects.get_or_create(worker=profile)
+            profile.refresh_from_db()
             
             res_serializer = WorkerProfileSerializer(profile)
             return Response(res_serializer.data, status=status.HTTP_201_CREATED)
@@ -88,6 +92,9 @@ class WorkerRegisterUpdateView(APIView):
         serializer = WorkerProfileCreateUpdateSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             profile = serializer.save()
+            # Ensure QR code exists
+            QRCodeMapping.objects.get_or_create(worker=profile)
+            profile.refresh_from_db()
             res_serializer = WorkerProfileSerializer(profile)
             return Response(res_serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

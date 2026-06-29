@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QrCode, ToggleLeft, ToggleRight, DollarSign, Calendar, Clock, MapPin, Check, X, ShieldAlert, Award, Star, ListPlus } from 'lucide-react';
-import api from '../api';
+import api, { getMediaUrl } from '../api';
 
 const WorkerDashboard = () => {
   const [profile, setProfile] = useState(null);
@@ -112,6 +112,8 @@ const WorkerDashboard = () => {
         end_time: newEnd + ':00'
       });
       setNewDay(0);
+      setNewStart('09:00');
+      setNewEnd('17:00');
       fetchDashboardData();
     } catch (err) {
       console.error(err);
@@ -409,7 +411,7 @@ const WorkerDashboard = () => {
               
               <div className="w-40 h-40 bg-white p-2 rounded-xl mx-auto flex items-center justify-center border border-slate-800 shadow-lg">
                 <img 
-                  src={profile.qr_code.qr_code_image || 'https://via.placeholder.com/150'} 
+                  src={getMediaUrl(profile.qr_code.qr_code_image) || 'https://via.placeholder.com/150'} 
                   alt="QR Code Code Mapping" 
                   className="w-full h-full object-contain"
                 />
@@ -418,7 +420,7 @@ const WorkerDashboard = () => {
                 Customers can scan this QR code to access your profile details and book you instantly on NeighbourGig.
               </p>
               <a 
-                href={profile.qr_code.qr_code_image}
+                href={getMediaUrl(profile.qr_code.qr_code_image)}
                 download={`neighbourgig_qr_${profile.id}.png`}
                 target="_blank"
                 rel="noreferrer"

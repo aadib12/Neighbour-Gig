@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, Calendar, Clock, MapPin, DollarSign, ArrowLeft, Heart, MessageSquare } from 'lucide-react';
-import api from '../api';
+import api, { getMediaUrl } from '../api';
 import BookingModal from '../components/BookingModal';
 
 const WorkerProfile = () => {
@@ -69,7 +69,7 @@ const WorkerProfile = () => {
             {/* Profile image avatar fallback */}
             <div className="w-28 h-28 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 mx-auto flex items-center justify-center text-white text-3xl font-extrabold shadow-2xl border-4 border-slate-800 overflow-hidden">
               {worker.profile_picture ? (
-                <img src={worker.profile_picture} alt="Worker profile" className="w-full h-full object-cover" />
+                <img src={getMediaUrl(worker.profile_picture)} alt="Worker profile" className="w-full h-full object-cover" />
               ) : (
                 <span>{worker.user.first_name?.[0] || 'W'}{worker.user.last_name?.[0] || 'P'}</span>
               )}
