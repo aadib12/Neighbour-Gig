@@ -49,21 +49,20 @@ class WorkerProfileCreateUpdateSerializer(serializers.ModelSerializer):
         )
 
     def to_internal_value(self, data):
-        # If skills is a string, convert it to a list
+        # If skills is a string, convert it to a valid JSON string list
         if 'skills' in data and isinstance(data['skills'], str):
             import json
             try:
                 # If it's JSON-formatted list, parse it
                 parsed_skills = json.loads(data['skills'])
                 if isinstance(parsed_skills, list):
-                    # Data is immutable QueryDict, so copy it
                     if hasattr(data, 'copy'):
                         data = data.copy()
-                    data['skills'] = parsed_skills
+                    data['skills'] = json.dumps(parsed_skills)
             except (json.JSONDecodeError, ValueError):
                 # Fallback: parse as comma-separated string
                 skills_list = [s.strip() for s in data['skills'].split(',') if s.strip()]
                 if hasattr(data, 'copy'):
                     data = data.copy()
-                data['skills'] = skills_list
+                data['skills'] = json.dumps(skills_list)
         return super().to_internal_value(data)
