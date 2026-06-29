@@ -90,6 +90,7 @@ class QRCodeMapping(models.Model):
             # Save QR image to models.ImageField in memory
             buffer = BytesIO()
             img.save(buffer, format='PNG')
+            buffer.seek(0)
             filename = f"worker_qr_{self.worker.id}.png"
             
             # Set the image to models.ImageField
