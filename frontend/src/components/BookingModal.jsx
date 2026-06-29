@@ -93,7 +93,7 @@ const BookingModal = ({ worker, onClose, onBookingSuccess }) => {
   const estimatedTotal = (worker.hourly_rate * hours).toFixed(2);
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-50 p-4">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-[9999] p-4">
       <div className="glass w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50 animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex justify-between items-center border-b border-slate-800 p-5">

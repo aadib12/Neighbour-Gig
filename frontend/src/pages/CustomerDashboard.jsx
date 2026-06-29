@@ -28,7 +28,7 @@ const PaymentModal = ({ booking, onClose, onPaymentSuccess }) => {
   )}`;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-50 p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-[9999] p-4 animate-in fade-in duration-300">
       <div className="glass w-full max-w-md rounded-2xl border border-slate-800 p-6 space-y-6 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
         {success ? (
           <div className="text-center py-10 space-y-4 animate-in zoom-in duration-300">
