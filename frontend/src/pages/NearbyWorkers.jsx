@@ -119,14 +119,28 @@ const NearbyWorkers = () => {
           </div>
         </div>
 
-        {/* Geolocate Button */}
-        <button 
-          onClick={triggerGeolocate}
-          className="bg-purple-600/10 hover:bg-purple-600 border border-purple-500/20 text-purple-400 hover:text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5"
-        >
-          <Navigation className="w-3.5 h-3.5" />
-          <span>My Location</span>
-        </button>
+        {/* Location Buttons */}
+        <div className="flex gap-2">
+          <button 
+            type="button"
+            onClick={() => {
+              setLat('37.774929');
+              setLng('-122.419416');
+            }}
+            className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5"
+          >
+            <span>SF Test Coordinates</span>
+          </button>
+          
+          <button 
+            type="button"
+            onClick={triggerGeolocate}
+            className="bg-purple-600/10 hover:bg-purple-600 border border-purple-500/20 text-purple-400 hover:text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5"
+          >
+            <Navigation className="w-3.5 h-3.5" />
+            <span>My Location</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Split Layout */}

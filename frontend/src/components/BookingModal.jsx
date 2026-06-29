@@ -79,8 +79,8 @@ const BookingModal = ({ worker, onClose, onBookingSuccess }) => {
     };
 
     try {
-      await api.post('/api/bookings/', bookingPayload);
-      onBookingSuccess();
+      const res = await api.post('/api/bookings/', bookingPayload);
+      onBookingSuccess(res.data);
       onClose();
     } catch (err) {
       console.error(err);
