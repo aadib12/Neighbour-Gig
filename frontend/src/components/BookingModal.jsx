@@ -12,20 +12,60 @@ const BookingModal = ({ worker, onClose, onBookingSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Availability slots state
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [selectedSlotId, setSelectedSlotId] = useState('');
+
   useEffect(() => {
     fetchServices();
   }, []);
 
   const fetchServices = async () => {
     try {
-      // Fetch services matching this worker's categories or generic services list
       const res = await api.get('/api/workers/services/');
-      setServices(res.data);
-      if (res.data.length > 0) {
-        setSelectedService(res.data[0].id);
+      // Filter services based on worker's skills (which hold predefined service names)
+      const workerSkills = worker.skills || [];
+      const filtered = res.data.filter(s => workerSkills.includes(s.name));
+      const finalServices = filtered.length > 0 ? filtered : res.data; // fallback if worker has no services selected
+      
+      setServices(finalServices);
+      if (finalServices.length > 0) {
+        setSelectedService(finalServices[0].id);
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const getAvailableSlotsForDate = (dateString) => {
+    if (!dateString || !worker.availabilities) return [];
+    
+    // Parse in local timezone to prevent offset errors
+    const [year, month, day] = dateString.split('-').map(Number);
+    const d = new Date(year, month - 1, day);
+    const jsDay = d.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const djangoDay = jsDay === 0 ? 6 : jsDay - 1; // Django model: 0 = Monday, ..., 6 = Sunday
+    
+    return worker.availabilities.filter(av => av.day_of_week === djangoDay);
+  };
+
+  const handleDateChange = (val) => {
+    setDate(val);
+    const slots = getAvailableSlotsForDate(val);
+    setAvailableSlots(slots);
+    if (slots.length > 0) {
+      setSelectedSlotId(slots[0].id);
+      setTime(slots[0].start_time.slice(0, 5));
+      
+      // Calculate slot duration
+      const startHour = parseInt(slots[0].start_time.split(':')[0]);
+      const endHour = parseInt(slots[0].end_time.split(':')[0]);
+      const duration = endHour > startHour ? endHour - startHour : 1;
+      setHours(duration);
+    } else {
+      setSelectedSlotId('');
+      setTime('');
+      setHours(1);
     }
   };
 
@@ -95,48 +135,62 @@ const BookingModal = ({ worker, onClose, onBookingSuccess }) => {
             </select>
           </div>
 
-          {/* Date & Time */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Date & Slot selection */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center space-x-1">
                 <Calendar className="w-3.5 h-3.5 text-purple-400" />
-                <span>Date</span>
+                <span>Booking Date</span>
               </label>
               <input 
                 type="date"
                 required
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-purple-500"
+                onChange={(e) => handleDateChange(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-purple-500 transition"
               />
             </div>
+
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center space-x-1">
                 <Clock className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Start Time</span>
+                <span>Available Time Slot</span>
               </label>
-              <input 
-                type="time"
-                required
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-purple-500"
-              />
+              {date ? (
+                availableSlots.length > 0 ? (
+                  <select
+                    value={selectedSlotId}
+                    onChange={(e) => {
+                      const slotId = e.target.value;
+                      setSelectedSlotId(slotId);
+                      const slot = availableSlots.find(av => av.id === parseInt(slotId));
+                      if (slot) {
+                        setTime(slot.start_time.slice(0, 5));
+                        const startHour = parseInt(slot.start_time.split(':')[0]);
+                        const endHour = parseInt(slot.end_time.split(':')[0]);
+                        const duration = endHour > startHour ? endHour - startHour : 1;
+                        setHours(duration);
+                      }
+                    }}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-purple-500 transition"
+                  >
+                    {availableSlots.map(av => (
+                      <option key={av.id} value={av.id}>
+                        {av.start_time.slice(0, 5)} - {av.end_time.slice(0, 5)}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="text-xs text-rose-400 bg-rose-500/10 p-3 rounded-lg border border-rose-500/20 text-center font-bold">
+                    No slots available today
+                  </div>
+                )
+              ) : (
+                <div className="text-xs text-slate-500 bg-slate-900/60 p-3 rounded-lg border border-slate-800/80 text-center">
+                  Select a date first
+                </div>
+              )}
             </div>
-          </div>
-
-          {/* Hours Duration */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Hours Requested</label>
-            <input 
-              type="number"
-              min="1"
-              max="24"
-              required
-              value={hours}
-              onChange={(e) => setHours(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-purple-500"
-            />
           </div>
 
           {/* Address */}

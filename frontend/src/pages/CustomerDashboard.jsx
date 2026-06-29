@@ -1,11 +1,135 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, MapPin, DollarSign, Star, MessageSquare, Plus, CheckCircle, Navigation, QrCode } from 'lucide-react';
+import { Calendar, Clock, MapPin, DollarSign, Star, MessageSquare, Plus, CheckCircle, Navigation, QrCode, X, Check } from 'lucide-react';
 import api from '../api';
+
+const PaymentModal = ({ booking, onClose, onPaymentSuccess }) => {
+  const [method, setMethod] = useState('UPI'); // UPI or COD
+  const [upiId, setUpiId] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      setSuccess(true);
+      setTimeout(() => {
+        localStorage.setItem(`paid_booking_${booking.id}`, method);
+        onPaymentSuccess();
+        onClose();
+      }, 1500);
+    }, 1500);
+  };
+
+  const upiQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+    `upi://pay?pa=neighbourgig@upi&pn=NeighbourGig&am=${booking.total_price}&cu=INR`
+  )}`;
+
+  return (
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-50 p-4 animate-in fade-in duration-300">
+      <div className="glass w-full max-w-md rounded-2xl border border-slate-800 p-6 space-y-6 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
+        {success ? (
+          <div className="text-center py-10 space-y-4 animate-in zoom-in duration-300">
+            <div className="w-16 h-16 bg-green-500/10 text-green-400 rounded-full flex items-center justify-center mx-auto border border-green-500/30">
+              <Check className="w-8 h-8 animate-bounce" />
+            </div>
+            <div>
+              <h4 className="text-xl font-bold text-white">Payment Confirmed!</h4>
+              <p className="text-xs text-slate-400 mt-1">
+                {method === 'UPI' ? 'UPI payment successfully verified.' : 'Cash on Delivery confirmed.'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-center border-b border-slate-800/80 pb-3">
+              <div>
+                <h3 className="text-lg font-bold text-white">Select Payment Method</h3>
+                <p className="text-xs text-slate-400">Total: ${booking.total_price}</p>
+              </div>
+              <button onClick={onClose} className="text-slate-400 hover:text-white transition p-1 hover:bg-slate-800 rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => setMethod('UPI')}
+                className={`w-1/2 p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition duration-300 ${
+                  method === 'UPI' 
+                    ? 'bg-purple-600/10 border-purple-500 text-purple-400' 
+                    : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800/50'
+                }`}
+              >
+                <QrCode className="w-6 h-6" />
+                <span className="text-xs font-bold">UPI / Scan QR</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMethod('COD')}
+                className={`w-1/2 p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition duration-300 ${
+                  method === 'COD' 
+                    ? 'bg-purple-600/10 border-purple-500 text-purple-400' 
+                    : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800/50'
+                }`}
+              >
+                <DollarSign className="w-6 h-6" />
+                <span className="text-xs font-bold">Cash on Delivery</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {method === 'UPI' ? (
+                <div className="space-y-4 text-center animate-in fade-in duration-300">
+                  <div className="bg-white p-2.5 rounded-xl inline-block shadow-lg border border-slate-200">
+                    <img src={upiQrUrl} alt="UPI Payment QR" className="w-36 h-36 object-contain" />
+                  </div>
+                  <p className="text-[10px] text-slate-400 max-w-xs mx-auto">
+                    Scan this QR code with any UPI app (GPay, PhonePe, Paytm) to transfer **${booking.total_price}**
+                  </p>
+                  <div className="text-left">
+                    <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Or enter your UPI ID</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="username@okaxis"
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 text-xs text-slate-400 space-y-2 animate-in fade-in duration-300">
+                  <p className="font-semibold text-white">Cash on Delivery (COD)</p>
+                  <p>You will pay the worker directly in cash or local methods upon service completion.</p>
+                  <p className="text-[10px] text-purple-400">No advance payment required.</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs py-3 rounded-xl transition duration-200 active:scale-95 shadow-lg flex justify-center items-center"
+              >
+                {submitting ? 'Verifying payment...' : 'Confirm'}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const CustomerDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPaymentBooking, setSelectedPaymentBooking] = useState(null);
   
   // Review form state
   const [activeReviewBookingId, setActiveReviewBookingId] = useState(null);
@@ -153,7 +277,29 @@ const CustomerDashboard = () => {
                     <span>{booking.total_price}</span>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
+                    {/* Pay Now or Payment Status Display */}
+                    {booking.status === 'ACCEPTED' && (() => {
+                      const payStatus = localStorage.getItem(`paid_booking_${booking.id}`);
+                      if (payStatus) {
+                        return (
+                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border uppercase ${
+                            payStatus === 'UPI' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+                          }`}>
+                            Paid ({payStatus})
+                          </span>
+                        );
+                      }
+                      return (
+                        <button 
+                          onClick={() => setSelectedPaymentBooking(booking)}
+                          className="text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 px-3 py-1.5 rounded-lg shadow transition duration-200 active:scale-95"
+                        >
+                          Pay Now
+                        </button>
+                      );
+                    })()}
+
                     {/* Cancel action */}
                     {booking.status === 'PENDING' && (
                       <button 
@@ -232,6 +378,15 @@ const CustomerDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Interactive Payment Checkout Modal */}
+      {selectedPaymentBooking && (
+        <PaymentModal 
+          booking={selectedPaymentBooking} 
+          onClose={() => setSelectedPaymentBooking(null)}
+          onPaymentSuccess={() => fetchBookings()}
+        />
+      )}
     </div>
   );
 };
