@@ -120,7 +120,7 @@ const AdminPanel = () => {
                       <div className="text-slate-500 text-[10px]">{w.user.email} &bull; {w.user.phone}</div>
                     </td>
                     <td className="p-4">
-                      <div className="font-semibold text-purple-400 truncate max-w-xs">{w.skills.join(', ') || 'Helper'}</div>
+                      <div className="font-semibold text-purple-400 truncate max-w-xs">{(Array.isArray(w.skills) ? w.skills.join(', ') : '') || 'Helper'}</div>
                       <div className="text-slate-500">${w.hourly_rate}/hr</div>
                     </td>
                     <td className="p-4 text-center">

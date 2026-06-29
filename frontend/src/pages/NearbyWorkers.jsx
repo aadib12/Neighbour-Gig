@@ -58,7 +58,7 @@ const NearbyWorkers = () => {
         // but since we get nearby coordinates, let's do a safe filter matching skills/category
         // In this MVP we can filter if category matches slug keywords in their skills tags
         filtered = res.data.filter(worker => 
-          worker.skills.some(skill => skill.toLowerCase().includes(selectedCategory.toLowerCase()))
+          Array.isArray(worker.skills) && worker.skills.some(skill => skill.toLowerCase().includes(selectedCategory.toLowerCase()))
         );
       }
       setWorkers(filtered);
@@ -171,7 +171,7 @@ const NearbyWorkers = () => {
                         {worker.user.first_name} {worker.user.last_name}
                       </h4>
                       <p className="text-[10px] text-purple-400 font-semibold uppercase mt-0.5">
-                        {worker.skills.slice(0, 2).join(', ') || 'Local Helper'}
+                        {(Array.isArray(worker.skills) ? worker.skills.slice(0, 2).join(', ') : '') || 'Local Helper'}
                       </p>
                     </div>
                     <div className="flex items-center text-xs text-amber-500 font-bold bg-amber-500/5 border border-amber-500/10 px-2 py-0.5 rounded">

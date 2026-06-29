@@ -80,7 +80,7 @@ const MapView = ({ center, workers, onSelectWorker }) => {
                     {worker.user.first_name} {worker.user.last_name}
                   </div>
                   <div className="text-xs text-purple-600 font-semibold mb-1">
-                    {worker.skills.slice(0, 2).join(', ') || 'General Helper'}
+                    {(Array.isArray(worker.skills) ? worker.skills.slice(0, 2).join(', ') : '') || 'General Helper'}
                   </div>
                   <div className="flex items-center text-xs space-x-1 text-amber-500 mb-2">
                     <Star className="w-3.5 h-3.5 fill-current" />
