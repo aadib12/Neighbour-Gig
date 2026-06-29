@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { MapPin, Navigation, Star, DollarSign, Search, Sliders } from 'lucide-react';
 import api from '../api';
 import MapView from '../components/MapView';
