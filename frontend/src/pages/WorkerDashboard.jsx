@@ -20,7 +20,7 @@ const WorkerDashboard = () => {
   const [updatingProfile, setUpdatingProfile] = useState(false);
 
   // New Availability form state
-  const [newDay, setNewDay] = useState(0);
+  const [newDate, setNewDate] = useState('');
   const [newStart, setNewStart] = useState('09:00');
   const [newEnd, setNewEnd] = useState('17:00');
   const [addingSchedule, setAddingSchedule] = useState(false);
@@ -67,8 +67,12 @@ const WorkerDashboard = () => {
       formData.append('bio', bio);
       formData.append('hourly_rate', parseFloat(hourlyRate));
       formData.append('address', address);
-      formData.append('latitude', parseFloat(latitude));
-      formData.append('longitude', parseFloat(longitude));
+      
+      const latVal = parseFloat(latitude);
+      const lngVal = parseFloat(longitude);
+      formData.append('latitude', isNaN(latVal) ? '' : latVal);
+      formData.append('longitude', isNaN(lngVal) ? '' : lngVal);
+      
       formData.append('skills', JSON.stringify(selectedServices));
 
       if (profilePictureFile) {
@@ -123,11 +127,11 @@ const WorkerDashboard = () => {
     setAddingSchedule(true);
     try {
       await api.post('/api/workers/availabilities/', {
-        day_of_week: parseInt(newDay),
+        date: newDate,
         start_time: newStart + ':00',
         end_time: newEnd + ':00'
       });
-      setNewDay(0);
+      setNewDate('');
       setNewStart('09:00');
       setNewEnd('17:00');
       fetchDashboardData();
@@ -263,7 +267,7 @@ const WorkerDashboard = () => {
                 availabilities.map(av => (
                   <div key={av.id} className="flex justify-between items-center bg-slate-900/60 p-2.5 rounded-xl text-xs border border-slate-800/80 hover:border-indigo-500/30 transition duration-300">
                     <div>
-                      <span className="font-bold text-white mr-2">{av.day_name}:</span>
+                      <span className="font-bold text-white mr-2">{av.date ? av.date : av.day_name}:</span>
                       <span className="text-slate-400">{av.start_time.slice(0, 5)} - {av.end_time.slice(0, 5)}</span>
                     </div>
                     <button onClick={() => handleDeleteSchedule(av.id)} className="text-rose-400 hover:text-rose-300 p-1 hover:bg-rose-500/10 rounded-lg transition">
@@ -277,20 +281,14 @@ const WorkerDashboard = () => {
             {/* Form */}
             <form onSubmit={handleAddSchedule} className="pt-4 border-t border-slate-800/60 space-y-3">
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Weekday</label>
-                <select 
-                  value={newDay} 
-                  onChange={(e) => setNewDay(e.target.value)}
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Date</label>
+                <input 
+                  type="date" 
+                  required
+                  value={newDate} 
+                  onChange={(e) => setNewDate(e.target.value)}
                   className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition"
-                >
-                  <option value={0}>Monday</option>
-                  <option value={1}>Tuesday</option>
-                  <option value={2}>Wednesday</option>
-                  <option value={3}>Thursday</option>
-                  <option value={4}>Friday</option>
-                  <option value={5}>Saturday</option>
-                  <option value={6}>Sunday</option>
-                </select>
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-2">

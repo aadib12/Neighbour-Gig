@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { MapPin, Navigation, Star, DollarSign, Search, Sliders } from 'lucide-react';
 import api from '../api';
 import MapView from '../components/MapView';
 import BookingModal from '../components/BookingModal';
 
 const NearbyWorkers = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -213,9 +214,9 @@ const NearbyWorkers = () => {
         <BookingModal 
           worker={selectedWorkerForBooking} 
           onClose={() => setSelectedWorkerForBooking(null)}
-          onBookingSuccess={() => {
-            alert("Booking created successfully! Check dashboard.");
+          onBookingSuccess={(booking) => {
             setSelectedWorkerForBooking(null);
+            navigate('/dashboard', { state: { openPaymentForBooking: booking } });
           }}
         />
       )}

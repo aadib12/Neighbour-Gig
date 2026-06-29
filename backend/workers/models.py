@@ -51,12 +51,14 @@ class WorkerAvailability(models.Model):
     )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     worker_profile = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='availabilities')
-    day_of_week = models.IntegerField(choices=DAY_CHOICES)
+    day_of_week = models.IntegerField(choices=DAY_CHOICES, null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
 
     def __str__(self):
-        return f"{self.worker_profile.user.email} - {self.get_day_of_week_display()} ({self.start_time} - {self.end_time})"
+        date_str = f"Date: {self.date}" if self.date else self.get_day_of_week_display()
+        return f"{self.worker_profile.user.email} - {date_str} ({self.start_time} - {self.end_time})"
 
 class QRCodeMapping(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

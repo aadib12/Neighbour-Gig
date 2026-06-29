@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Calendar, Clock, MapPin, DollarSign, Star, MessageSquare, Plus, CheckCircle, Navigation, QrCode, X, Check } from 'lucide-react';
 import api from '../api';
 
@@ -137,11 +137,19 @@ const CustomerDashboard = () => {
   const [reviewComment, setReviewComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
 
+  const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.openPaymentForBooking) {
+      setSelectedPaymentBooking(location.state.openPaymentForBooking);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   const fetchBookings = async () => {
     try {

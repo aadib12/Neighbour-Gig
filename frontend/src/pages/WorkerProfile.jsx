@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, Calendar, Clock, MapPin, DollarSign, ArrowLeft, Heart, MessageSquare } from 'lucide-react';
 import api, { getMediaUrl } from '../api';
 import BookingModal from '../components/BookingModal';
 
 const WorkerProfile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [worker, setWorker] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -195,9 +196,9 @@ const WorkerProfile = () => {
         <BookingModal 
           worker={worker} 
           onClose={() => setShowBooking(false)} 
-          onBookingSuccess={() => {
-            alert("Booking request submitted successfully!");
+          onBookingSuccess={(booking) => {
             setShowBooking(false);
+            navigate('/dashboard', { state: { openPaymentForBooking: booking } });
           }}
         />
       )}

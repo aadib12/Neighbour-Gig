@@ -39,14 +39,7 @@ const BookingModal = ({ worker, onClose, onBookingSuccess }) => {
 
   const getAvailableSlotsForDate = (dateString) => {
     if (!dateString || !worker.availabilities) return [];
-    
-    // Parse in local timezone to prevent offset errors
-    const [year, month, day] = dateString.split('-').map(Number);
-    const d = new Date(year, month - 1, day);
-    const jsDay = d.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    const djangoDay = jsDay === 0 ? 6 : jsDay - 1; // Django model: 0 = Monday, ..., 6 = Sunday
-    
-    return worker.availabilities.filter(av => av.day_of_week === djangoDay);
+    return worker.availabilities.filter(av => av.date === dateString);
   };
 
   const handleDateChange = (val) => {

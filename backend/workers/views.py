@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions, status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import F, Value, FloatField
-from django.db.models.functions import ACos, Cos, Radians, Sin
+from django.db.models.functions import ACos, Cos, Radians, Sin, Cast
 
 from accounts.models import User
 from .models import Category, Service, WorkerProfile, WorkerAvailability, QRCodeMapping
@@ -136,9 +136,10 @@ class NearbyWorkersView(APIView):
             longitude__isnull=False
         ).annotate(
             distance=R * ACos(
-                Cos(Radians(user_lat)) * Cos(Radians(F('latitude'))) *
-                Cos(Radians(F('longitude')) - Radians(user_lng)) +
-                Sin(Radians(user_lat)) * Sin(Radians(F('latitude')))
+                Cos(Radians(user_lat)) * Cos(Radians(Cast(F('latitude'), FloatField()))) *
+                Cos(Radians(Cast(F('longitude'), FloatField())) - Radians(user_lng)) +
+                Sin(Radians(user_lat)) * Sin(Radians(Cast(F('latitude'), FloatField()))),
+                output_field=FloatField()
             )
         ).filter(distance__lte=radius).order_by('distance')
 

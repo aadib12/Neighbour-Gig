@@ -19,7 +19,7 @@ class WorkerAvailabilitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkerAvailability
-        fields = ('id', 'day_of_week', 'day_name', 'start_time', 'end_time')
+        fields = ('id', 'day_of_week', 'day_name', 'date', 'start_time', 'end_time')
 
 class QRCodeMappingSerializer(serializers.ModelSerializer):
     class Meta:
