@@ -84,7 +84,7 @@ const NearbyWorkers = () => {
   };
 
   return (
-    <div className="space-y-6 py-4 h-[calc(100vh-140px)] flex flex-col">
+    <div className="space-y-6 py-4 flex flex-col min-h-screen">
       {/* Top filter controls */}
       <div className="glass p-5 rounded-2xl border border-slate-800/80 flex flex-wrap gap-4 items-center justify-between">
         <div className="flex flex-wrap gap-3 items-center">
@@ -144,7 +144,7 @@ const NearbyWorkers = () => {
       </div>
 
       {/* Main Split Layout */}
-      <div className="flex-grow flex flex-col md:flex-row gap-6 overflow-hidden h-full">
+      <div className="flex flex-col md:flex-row gap-6">
         
         {/* Left Side: Worker Cards */}
         <div className="w-full md:w-1/3 flex flex-col gap-4 overflow-y-auto pr-1">
