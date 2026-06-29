@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+# pyrefly: ignore [missing-import]
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -70,9 +71,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'neighbourgig.wsgi.application'
 
+import urllib.parse
+
+db_url = os.getenv('DATABASE_URL')
+if db_url:
+    try:
+        if '://' in db_url:
+            scheme, rest = db_url.split('://', 1)
+            if '@' in rest:
+                user_info, host_info = rest.rsplit('@', 1)
+                if ':' in user_info:
+                    username, password = user_info.split(':', 1)
+                    # Strip wrapping brackets if present
+                    if password.startswith('[') and password.endswith(']'):
+                        password = password[1:-1]
+                    username = urllib.parse.quote_plus(username)
+                    password = urllib.parse.quote(password)
+                    db_url = f"{scheme}://{username}:{password}@{host_info}"
+                    os.environ['DATABASE_URL'] = db_url
+    except Exception:
+        pass
+
+# Ensure Windows path uses forward slashes in default sqlite URL to avoid ParseError in dj_database_url
+sqlite_default = f"sqlite:///{ (BASE_DIR / 'db.sqlite3').as_posix() }"
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        default=sqlite_default,
         conn_max_age=600
     )
 }
