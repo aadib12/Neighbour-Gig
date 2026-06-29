@@ -8,7 +8,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('id', 'booking', 'customer_name', 'customer_email', 'rating', 'comment', 'created_at')
+        fields = ('id', 'booking', 'worker', 'customer_name', 'customer_email', 'rating', 'comment', 'created_at')
         read_only_fields = ('id', 'created_at')
 
     def get_customer_name(self, obj):

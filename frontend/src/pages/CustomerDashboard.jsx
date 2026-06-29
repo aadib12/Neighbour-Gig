@@ -143,15 +143,18 @@ const CustomerDashboard = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, []);
-
-  useEffect(() => {
-    if (location.state?.openPaymentForBooking) {
-      setSelectedPaymentBooking(location.state.openPaymentForBooking);
-      // Clear location state cleanly using React Router
-      navigate('/dashboard', { replace: true, state: {} });
+    
+    // Check sessionStorage for pending payment
+    const pending = sessionStorage.getItem('pending_payment_booking');
+    if (pending) {
+      try {
+        setSelectedPaymentBooking(JSON.parse(pending));
+      } catch (e) {
+        console.error("Failed to parse pending payment booking", e);
+      }
+      sessionStorage.removeItem('pending_payment_booking');
     }
-  }, [location, navigate]);
+  }, []);
 
   const fetchBookings = async () => {
     try {

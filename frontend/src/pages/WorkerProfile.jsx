@@ -198,7 +198,8 @@ const WorkerProfile = () => {
           onClose={() => setShowBooking(false)} 
           onBookingSuccess={(booking) => {
             setShowBooking(false);
-            navigate('/dashboard', { state: { openPaymentForBooking: booking } });
+            sessionStorage.setItem('pending_payment_booking', JSON.stringify(booking));
+            navigate('/dashboard');
           }}
         />
       )}

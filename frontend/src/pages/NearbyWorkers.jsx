@@ -216,7 +216,8 @@ const NearbyWorkers = () => {
           onClose={() => setSelectedWorkerForBooking(null)}
           onBookingSuccess={(booking) => {
             setSelectedWorkerForBooking(null);
-            navigate('/dashboard', { state: { openPaymentForBooking: booking } });
+            sessionStorage.setItem('pending_payment_booking', JSON.stringify(booking));
+            navigate('/dashboard');
           }}
         />
       )}
