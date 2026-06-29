@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import L from 'leaflet';
+import * as L from 'leaflet';
 import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
