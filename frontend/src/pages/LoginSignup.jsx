@@ -49,7 +49,7 @@ const LoginSignup = () => {
     try {
       if (isLogin) {
         // Login flow
-        const res = await api.post('/api/auth/login', {
+        const res = await api.post('/api/auth/login/', {
           email: formData.email,
           password: formData.password
         });
@@ -62,7 +62,7 @@ const LoginSignup = () => {
         handleRedirect(userData.role);
       } else {
         // Register flow
-        const res = await api.post('/api/auth/register', {
+        const res = await api.post('/api/auth/register/', {
           email: formData.email,
           password: formData.password,
           first_name: formData.first_name,

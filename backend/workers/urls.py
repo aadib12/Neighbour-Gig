@@ -12,7 +12,7 @@ router.register('availabilities', WorkerAvailabilityViewSet, basename='availabil
 router.register('profiles', WorkerProfileViewSet, basename='profile')
 
 urlpatterns = [
-    path('nearby', NearbyWorkersView.as_view(), name='workers_nearby'),
-    path('register', WorkerRegisterUpdateView.as_view(), name='workers_register'),
+    path('nearby/', NearbyWorkersView.as_view(), name='workers_nearby'),
+    path('register/', WorkerRegisterUpdateView.as_view(), name='workers_register'),
     path('', include(router.urls)),
 ]

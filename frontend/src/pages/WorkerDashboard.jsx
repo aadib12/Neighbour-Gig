@@ -30,7 +30,7 @@ const WorkerDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       // 1. Fetch Worker Profile
-      const profileRes = await api.get('/api/workers/register');
+      const profileRes = await api.get('/api/workers/register/');
       setProfile(profileRes.data);
       setBio(profileRes.data.bio || '');
       setHourlyRate(profileRes.data.hourly_rate || 0);
@@ -40,7 +40,7 @@ const WorkerDashboard = () => {
       setSkillsInput(profileRes.data.skills?.join(', ') || '');
       
       // 2. Fetch Bookings
-      const bookingsRes = await api.get('/api/bookings/user');
+      const bookingsRes = await api.get('/api/bookings/user/');
       setBookings(bookingsRes.data);
       
       // 3. Fetch Availabilities
@@ -58,7 +58,7 @@ const WorkerDashboard = () => {
     setUpdatingProfile(true);
     const skillsList = skillsInput.split(',').map(s => s.trim()).filter(s => s !== '');
     try {
-      const res = await api.patch('/api/workers/register', {
+      const res = await api.patch('/api/workers/register/', {
         bio,
         hourly_rate: parseFloat(hourlyRate),
         address,
@@ -79,7 +79,7 @@ const WorkerDashboard = () => {
   const handleToggleAvailability = async () => {
     if (!profile) return;
     try {
-      const res = await api.patch('/api/workers/register', {
+      const res = await api.patch('/api/workers/register/', {
         is_available: !profile.is_available
       });
       setProfile(res.data);

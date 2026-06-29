@@ -42,7 +42,7 @@ const NearbyWorkers = () => {
   const fetchNearbyWorkers = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/api/workers/nearby`, {
+      const res = await api.get(`/api/workers/nearby/`, {
         params: {
           lat: lat,
           lng: lng,
