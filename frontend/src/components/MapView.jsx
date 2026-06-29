@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -33,6 +33,18 @@ const getCustomerIcon = () => {
   });
 };
 
+const MapResizeHelper = () => {
+  const map = useMap();
+  React.useEffect(() => {
+    // Invalidate Leaflet size to force redrawing map tiles correctly inside flex elements
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [map]);
+  return null;
+};
+
 const MapView = ({ center, workers, onSelectWorker }) => {
   if (!center || isNaN(center[0]) || isNaN(center[1])) {
     return (
@@ -50,6 +62,7 @@ const MapView = ({ center, workers, onSelectWorker }) => {
         scrollWheelZoom={true}
         className="w-full h-full"
       >
+        <MapResizeHelper />
         {/* Dark theme maps tiles from CartoDB */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -67,11 +80,13 @@ const MapView = ({ center, workers, onSelectWorker }) => {
 
         {/* Worker Pins */}
         {workers.map((worker) => {
-          if (!worker.latitude || !worker.longitude) return null;
+          const latVal = parseFloat(worker.latitude);
+          const lngVal = parseFloat(worker.longitude);
+          if (isNaN(latVal) || isNaN(lngVal) || latVal === 0 || lngVal === 0) return null;
           return (
             <Marker 
               key={worker.id} 
-              position={[parseFloat(worker.latitude), parseFloat(worker.longitude)]}
+              position={[latVal, lngVal]}
               icon={getWorkerIcon()}
             >
               <Popup>
