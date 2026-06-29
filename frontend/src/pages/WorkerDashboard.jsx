@@ -521,7 +521,30 @@ const WorkerDashboard = () => {
 
               {/* Coordinates lookup */}
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Local Latitude / Longitude</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Local Latitude / Longitude</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                          (position) => {
+                            setLatitude(position.coords.latitude.toFixed(6));
+                            setLongitude(position.coords.longitude.toFixed(6));
+                          },
+                          (err) => {
+                            alert("Failed to get location. Please allow location permissions in your browser.");
+                          }
+                        );
+                      } else {
+                        alert("Geolocation is not supported by your browser.");
+                      }
+                    }}
+                    className="text-[10px] text-purple-400 hover:text-purple-300 font-bold transition"
+                  >
+                    Get Current Coordinates
+                  </button>
+                </div>
                 <div className="flex space-x-2">
                   <input 
                     type="text"
@@ -538,13 +561,6 @@ const WorkerDashboard = () => {
                     className="w-1/2 bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500 transition"
                   />
                 </div>
-                <button 
-                  type="button"
-                  onClick={triggerGeolocate}
-                  className="mt-2 text-[10px] text-purple-400 font-bold hover:underline transition"
-                >
-                  Locate me automatically
-                </button>
               </div>
 
               <button 
