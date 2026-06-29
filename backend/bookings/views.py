@@ -36,6 +36,14 @@ class BookingViewSet(viewsets.ModelViewSet):
                 return Booking.objects.none()
         return Booking.objects.none()
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        full_serializer = BookingSerializer(serializer.instance)
+        headers = self.get_success_headers(serializer.data)
+        return Response(full_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     def perform_create(self, serializer):
         user = self.request.user
         if user.role != 'CUSTOMER':

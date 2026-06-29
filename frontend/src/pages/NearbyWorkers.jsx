@@ -199,7 +199,7 @@ const NearbyWorkers = () => {
         </div>
 
         {/* Right Side: Map Container */}
-        <div className="w-full md:w-2/3 h-[300px] md:h-full overflow-hidden">
+        <div className="w-full md:w-2/3 h-[450px] md:h-[600px] overflow-hidden">
           <MapView 
             center={[parseFloat(lat), parseFloat(lng)]} 
             workers={workers} 
